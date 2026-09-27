@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape from the Mysterious Island - Indonesian Geography</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #4facfe;
+            background-image: radial-gradient(circle at center, #00f2fe 0%, #4facfe 100%);
+            color: #f8fafc;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        h1, h2, h3, .pixel-font {
+            font-family: 'Press Start 2P', cursive;
+            line-height: 1.5;
+        }
+
+        .island-theme {
+            background: #2d6a4f; /* Jungle Green */
+            border: 12px solid #e9c46a; /* Sandy border */
+            border-radius: 2rem;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 15px 30px rgba(0,0,0,0.4);
+            background-image: 
+                radial-gradient(circle at 20% 30%, #40916c 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, #1b4332 0%, transparent 40%);
+            padding: 2rem;
+            position: relative;
+        }
+
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(to bottom, #f59e0b, #d97706);
+            border: 3px solid #fcd34d;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+             background: linear-gradient(to bottom, #fbbf24, #f59e0b);
+        }
+
+        .btn-option {
+            background-color: #1e293b;
+            border: 2px solid #475569;
+            color: #e2e8f0;
+            text-align: left;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            line-height: 1.4;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .btn-option:hover {
+            background-color: #334155;
+            border-color: #94a3b8;
+            transform: scale(1.01);
+        }
+
+        .btn-option.selected {
+            background-color: #2563eb;
+            border-color: #60a5fa;
+        }
+
+        .btn-option.correct {
+            background-color: #16a34a;
+            border-color: #4ade80;
+            animation: pulse-green 1s infinite;
+        }
+
+        .btn-option.incorrect {
+            background-color: #dc2626;
+            border-color: #f87171;
+            animation: shake 0.5s;
+        }
+
+        /* Animations */
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hop Animation for Map Movement */
+        @keyframes hop {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -120%) scale(1.3) rotate(5deg); }
+        }
+
+        .walking-anim {
+            animation: hop 0.3s infinite !important;
+            z-index: 50 !important;
+            filter: brightness(1.2) drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background-color: #1e293b;
+            border-radius: 9999px;
+            height: 1.2rem;
+            overflow: hidden;
+            border: 2px solid #475569;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            transition: width 0.3s ease;
+        }
+
+        /* Status Effects */
+        .status-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            z-index: 50;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .status-success {
+            background-color: #15803d;
+            border: 2px solid #4ade80;
+            color: white;
+        }
+
+        .status-error {
+            background-color: #b91c1c;
+            border: 2px solid #f87171;
+            color: white;
+        }
+        
+        .environment-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            border: 4px solid #e9c46a;
+            margin-bottom: 1rem;
+            background: linear-gradient(to bottom, #38bdf8, #0284c7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        /* Dynamic Island Map Styles */
+        .island-map-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            background: radial-gradient(circle at center, #0ea5e9 0%, #0369a1 100%);
+            border-radius: 1rem;
+            border: 6px solid #e9c46a;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+            margin-bottom: 1.5rem;
+        }
+
+        .island-landmass {
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: radial-gradient(circle at 30% 30%, #4ade80 0%, #16a34a 50%, #14532d 100%);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.5), inset -10px -10px 30px rgba(0,0,0,0.4);
+            border: 8px solid #fef08a; /* Sandy beach border */
+        }
+
+        .map-node {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: #1e293b;
+            border: 3px solid #fcd34d;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+        
+        .map-node.finish-line {
+            background-color: #ef4444;
+            width: 36px;
+            height: 36px;
+            font-size: 16px;
+        }
+
+        .team-avatar {
+            position: absolute;
+            font-size: 1.8rem;
+            transform: translate(-50%, -50%);
+            transition: top 1s ease-in-out, left 1s ease-in-out;
+            z-index: 20;
+            filter: drop-shadow(0px 3px 3px rgba(0,0,0,0.8));
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid transparent;
+        }
+
+        .team-avatar.active-turn {
+            border-color: #facc15;
+            background: rgba(0,0,0,0.6);
+            box-shadow: 0 0 15px #facc15;
+            z-index: 30;
+        }
+
+        .map-svg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .question-box {
+            background: rgba(15, 23, 42, 0.9);
+            border: 3px solid #e9c46a;
+        }
+
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 md:p-4">
+
+    <div id="statusMessage" class="status-message"></div>
+
+    <div class="game-container w-full relative">
+        
+        <div id="screen-menu" class="text-center fade-in island-theme">
+            <h1 class="text-3xl md:text-4xl text-yellow-300 mb-6 drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">Escape from the Mysterious Island</h1>
+            
+            <div class="bg-black/50 p-6 rounded-lg border border-yellow-500/50 mb-8 text-left text-white shadow-lg">
+                <p class="mb-4 text-lg text-yellow-200"><strong>Mission Briefing:</strong></p>
+                <p class="mb-2">Your ship has crashed on a mysterious, uncharted island in the Indonesian archipelago.</p>
+                <p class="mb-2">To escape, your team must navigate through treacherous terrains by proving your knowledge of the <strong>Geographical and Astronomical conditions of Indonesia</strong>.</p>
+                <ul class="list-disc list-inside mb-4 ml-4 leading-relaxed">
+                    <li>6 Teams take turns moving across the island map.</li>
+                    <li>8 Obstacles (Questions) per team.</li>
+                    <li>Levels 1-3 are standard challenges. Levels 4-8 are HOTS challenges!</li>
+                    <li>Answer correctly to walk forward. The first teams to cross the island survive!</li>
+                </ul>
+                <p class="text-green-400 font-bold text-center mt-4 text-xl">Good luck, explorers!</p>
+            </div>
+
+            <button onclick="startGame()" class="btn btn-primary px-8 py-4 text-xl rounded-xl w-full md:w-auto">
+                Start Mission
+            </button>
+        </div>
+
+        <div id="screen-main-board" class="hidden fade-in w-full island-theme">
+            <h2 class="text-2xl md:text-3xl text-yellow-300 mb-4 text-center pixel-font drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">Escape Map</h2>
+            
+            <div class="flex justify-between items-center bg-black/60 p-3 rounded-lg border border-yellow-500/50 mb-4 shadow-inner">
+                <div class="text-yellow-100 font-bold pixel-font text-[10px] md:text-xs">
+                    Obstacle Level: <span id="board-round-display" class="text-white">1/8</span>
+                </div>
+                <div class="text-yellow-100 font-bold pixel-font text-[10px] md:text-xs text-right">
+                    Current Turn: <br class="md:hidden"/> <span id="board-turn-display" class="text-green-400 text-sm md:text-base">Team 1</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Simulator Map -->
+            <div class="island-map-container" id="island-map">
+                <div class="island-landmass"></div>
+                <svg id="map-paths" class="map-svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+                <!-- Nodes and Avatars will be generated by JS here -->
+            </div>
+            
+            <!-- Quick Score View -->
+            <div id="quick-scores" class="flex flex-wrap justify-center gap-2 mb-6">
+                <!-- Scores injected by JS -->
+            </div>
+            
+            <div class="text-center">
+                <button id="btn-start-turn" onclick="startTurn()" class="btn btn-primary px-8 py-4 text-lg w-full md:w-auto rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.6)] animate-pulse">
+                    Face Next Challenge!
+                </button>
+            </div>
+        </div>
+
+        <div id="screen-game" class="hidden fade-in island-theme">
+            <div class="flex justify-between items-center mb-4 bg-black/50 p-2 rounded border border-slate-600">
+                <div id="current-team-display" class="pixel-font text-yellow-400 text-sm md:text-base">Team 1</div>
+                <div class="pixel-font text-yellow-100 text-xs md:text-sm">Obstacle <span id="question-number">1</span>/8</div>
+            </div>
+            
+            <div class="progress-container mb-6">
+                <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+            </div>
+
+            <div id="obstacle-environment" class="environment-image shadow-inner">
+                <!-- Emoji representing environment -->
+                🌴
+            </div>
+
+            <div class="question-box p-4 md:p-6 rounded-lg mb-6">
+                <p id="obstacle-context" class="text-sm md:text-base text-yellow-300 mb-3 italic border-b border-slate-600 pb-3">
+                    You encounter a dense mangrove forest...
+                </p>
+                <h3 id="question-text" class="text-lg md:text-xl font-bold mt-4 mb-2 text-white font-sans leading-relaxed">
+                    Question text goes here?
+                </h3>
+            </div>
+
+            <div id="options-container" class="space-y-3 mb-6">
+                <!-- Options generated by JS -->
+            </div>
+
+            <div class="flex justify-end mt-4">
+                 <button id="btn-finish-turn" onclick="finishTurn()" class="btn btn-primary px-6 py-4 rounded-xl hidden text-sm">
+                    Return to Map ➔
+                </button>
+            </div>
+        </div>
+        
+        <div id="screen-leaderboard" class="hidden fade-in island-theme">
+            <h2 class="text-2xl md:text-3xl text-yellow-300 mb-6 text-center drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">Mission Standings</h2>
+            
+            <div class="bg-black/70 border-2 border-yellow-500 rounded-lg overflow-hidden mb-8 shadow-2xl">
+                <div class="bg-black/90 p-4 flex justify-between font-bold text-yellow-200 border-b-2 border-yellow-600 pixel-font text-xs">
+                    <span>Rank / Team</span>
+                    <span>Score</span>
+                </div>
+                <div id="leaderboard-list">
+                    <!-- Leaderboard populated by JS -->
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button onclick="resetGame()" id="btn-restart" class="btn btn-primary px-8 py-4 rounded-xl hidden">
+                    Restart Entire Mission
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Game Data & State ---
+        
+        const environments = [
+            { emoji: "🌊", context: "A fast-moving ocean current blocks your path. You must understand maritime geography to cross!" },
+            { emoji: "☀️", context: "The equatorial sun beats down heavily. You need to apply knowledge of astronomical locations to find shade." },
+            { emoji: "🧭", context: "Your compass is spinning. You must calculate regional time zone differences to navigate accurately." },
+            { emoji: "🌋", context: "A fiery volcano erupts in the distance. Understanding tectonic plate boundaries is your only way to stay safe." },
+            { emoji: "⛈️", context: "Monsoon winds bring heavy rains, threatening to flood your path. How will you predict the weather patterns?" },
+            { emoji: "🏝️", context: "You are navigating between thousands of small islands. The archipelagic conditions test your strategic planning." },
+            { emoji: "🚢", context: "You discover an ancient trade route. You must use knowledge of global maritime crossroads to decipher the map." },
+            { emoji: "🌡️", context: "The climate shifts dramatically as you climb a mountain. You must evaluate the geographical impact on temperature." }
+        ];
+
+        // Question Bank: Simplified for ESL Grade 5. Equal length options. HOTS placed at levels 4-8.
+        const allQuestions = [
+            // TEAM 1
+            [
+                { text: "Indonesia is located on the equator (0 degrees). What happens because of this?", type: "Regular", options: ["The weather is warm and tropical all year long.", "The country has a very long and cold winter.", "It snows heavily in the cities every December.", "The sun never shines during the summer months."], answer: "The weather is warm and tropical all year long." },
+                { text: "Indonesia is an archipelago. What does the word 'archipelago' mean?", type: "Regular", options: ["A large country that is made of many islands.", "A wide desert with no water and no plants.", "A huge mountain that has ice on the top.", "A thick forest where large wild animals live."], answer: "A large country that is made of many islands." },
+                { text: "How many different time zones are used in Indonesia?", type: "Regular", options: ["Three zones: Western, Central, and Eastern.", "One single zone for the entire big country.", "Four zones to match the four main seasons.", "Two zones: one for day and one for night."], answer: "Three zones: Western, Central, and Eastern." },
+                { text: "[HOTS] A farmer wants to dry his harvested rice outside. Which wind helps him the most?", type: "HOTS", options: ["The East Monsoon wind, because it brings dry air.", "The West Monsoon wind, because it brings heavy rain.", "The Northern wind, because it is always very cold.", "The Equatorial wind, because it causes big storms."], answer: "The East Monsoon wind, because it brings dry air." },
+                { text: "[HOTS] It is 07:00 AM in Jakarta (West). Why is it already 09:00 AM in Papua (East)?", type: "HOTS", options: ["Papua is further east, so it sees the sun earlier.", "Papua is near the equator, making clocks run fast.", "Jakarta is very dark, so they delay the morning.", "Papua does not use clocks, they guess the time."], answer: "Papua is further east, so it sees the sun earlier." },
+                { text: "[HOTS] Why does Indonesia feel earthquakes more often than many other countries?", type: "HOTS", options: ["It sits on the meeting point of big moving earth plates.", "The heavy tropical rain makes the ground crack open.", "The hot weather causes the dirt to jump up and shake.", "Big ocean waves constantly crash into the small islands."], answer: "It sits on the meeting point of big moving earth plates." },
+                { text: "[HOTS] If the ocean water rises because of global warming, what is the biggest danger for Indonesia?", type: "HOTS", options: ["Many small islands and beaches could be flooded.", "The hot volcanoes will become completely frozen.", "The equator line will move to a different country.", "The big mountains will sink into the deep ground."], answer: "Many small islands and beaches could be flooded." },
+                { text: "[HOTS] Why do many international cargo ships travel through the waters of Indonesia?", type: "HOTS", options: ["It provides a fast shortcut between Asia and Europe.", "The sea is perfectly flat with no waves or storms.", "The government gives free fuel to all passing ships.", "The water is deep enough for submarines to fly out."], answer: "It provides a fast shortcut between Asia and Europe." }
+            ],
+            // TEAM 2
+            [
+                { text: "Indonesia is located between two major continents. What are they?", type: "Regular", options: ["The continent of Asia and the continent of Australia.", "The continent of Europe and the continent of Africa.", "The continent of America and the continent of Asia.", "The continent of Antarctica and the continent of Europe."], answer: "The continent of Asia and the continent of Australia." },
+                { text: "What do we call the line of active volcanoes that crosses through Indonesia?", type: "Regular", options: ["The Pacific Ring of Fire.", "The Great Ocean Circle.", "The Hot Equator Belt.", "The Asian Mountain Wall."], answer: "The Pacific Ring of Fire." },
+                { text: "Which monsoon wind brings heavy rains to Indonesia at the end of the year?", type: "Regular", options: ["The West Monsoon wind from Asia and the Pacific Ocean.", "The East Monsoon wind from the dry deserts of Australia.", "The South Polar wind blowing from the freezing Antarctic.", "The North Trade wind blowing from the snowy Arctic sea."], answer: "The West Monsoon wind from Asia and the Pacific Ocean." },
+                { text: "[HOTS] Why do the eastern islands of Indonesia have a longer dry season than the western islands?", type: "HOTS", options: ["They are closer to Australia, so the dry wind hits them first.", "They are much closer to the sun during the summer time.", "They have no trees, so it never rains there at all.", "The sea water in the east evaporates much slower."], answer: "They are closer to Australia, so the dry wind hits them first." },
+                { text: "[HOTS] Sending products across Indonesia is difficult and expensive. Why is this true?", type: "HOTS", options: ["Goods must travel across the ocean to reach different islands.", "The hot weather melts the roads so trucks cannot drive.", "Volcanoes block every single street in the entire country.", "Airplanes are not allowed to fly anywhere near the equator."], answer: "Goods must travel across the ocean to reach different islands." },
+                { text: "[HOTS] An airplane flies from Japan to Australia. Why does it fly over Indonesia?", type: "HOTS", options: ["Indonesia is located right in the middle as a crossroad.", "The air above Indonesia makes planes fly twice as fast.", "Indonesia is the only place without clouds in the sky.", "Planes need to avoid the magnetic pull of the ocean."], answer: "Indonesia is located right in the middle as a crossroad." },
+                { text: "[HOTS] If the heavy rain season arrives two months late, what is the biggest problem?", type: "HOTS", options: ["Farmers cannot plant their food crops on the right schedule.", "The ocean level will drop and beaches will become huge.", "The volcanoes will explode because they are too dry.", "The sun will shine at night because the sky is clear."], answer: "Farmers cannot plant their food crops on the right schedule." },
+                { text: "[HOTS] Volcanoes are dangerous, but they give a great benefit to farmers. What is it?", type: "HOTS", options: ["The ash from the volcano makes the soil very good for growing.", "The hot lava can be shaped into strong tools for farming.", "The heat from the mountain keeps the crops warm at night.", "The smoke scares away all the bad insects from the plants."], answer: "The ash from the volcano makes the soil very good for growing." }
+            ],
+            // TEAM 3
+            [
+                { text: "Because Indonesia is on the equator, what is true about day and night?", type: "Regular", options: ["Day time and night time are about equal in length all year.", "The day is very long in summer and very short in winter.", "The sun stays in the sky for 24 hours during the summer.", "Night time is always longer because of the heavy clouds."], answer: "Day time and night time are about equal in length all year." },
+                { text: "What natural disasters happen often because Indonesia is on the Ring of Fire?", type: "Regular", options: ["Volcanic eruptions and strong earthquakes.", "Heavy snow storms and freezing weather.", "Giant sand storms blowing from the desert.", "Long periods of zero rain causing dry rivers."], answer: "Volcanic eruptions and strong earthquakes." },
+                { text: "Which Indonesian time zone includes the big islands of Sumatra and Java?", type: "Regular", options: ["Western Indonesian Time (WIB).", "Central Indonesian Time (WITA).", "Eastern Indonesian Time (WIT).", "Pacific Standard Time (PST)."], answer: "Western Indonesian Time (WIB)." },
+                { text: "[HOTS] How did Indonesia's location between two oceans change its history?", type: "HOTS", options: ["Many foreign ships came to trade and share their cultures.", "The strong ocean waves kept all visitors away from the land.", "The people had to move to Asia to escape big sea storms.", "The salt from the sea destroyed all historical buildings."], answer: "Many foreign ships came to trade and share their cultures." },
+                { text: "[HOTS] A boy in London (Europe) calls his friend in Bali (Indonesia) at lunchtime. What should he remember?", type: "HOTS", options: ["Bali is far east, so it is already night time there.", "Bali is on the equator, so the time is exactly the same.", "Bali is in the south, so it is still yesterday there.", "Bali does not use clocks, they only look at the sun."], answer: "Bali is far east, so it is already night time there." },
+                { text: "[HOTS] If the government builds a big port near the beach, what must they check first?", type: "HOTS", options: ["They must make sure the area is safe from big earthquakes.", "They must find a beach with white sand instead of black sand.", "They must build it on the equator so ships drive straight.", "They must put it inside a volcano crater to hide the ships."], answer: "They must make sure the area is safe from big earthquakes." },
+                { text: "[HOTS] Ice at the North Pole is melting. Why does this worry the people of Indonesia?", type: "HOTS", options: ["The rising sea water can flood many low coastal areas.", "The cold water will freeze the tropical beaches instantly.", "The extra water will extinguish all the active volcanoes.", "The changing waves will push the islands to Australia."], answer: "The rising sea water can flood many low coastal areas." },
+                { text: "[HOTS] Why are there unique animals in central Indonesia that exist nowhere else?", type: "HOTS", options: ["Deep ocean water stopped animals from crossing long ago.", "People built special farms to create new types of animals.", "The hot volcano weather changed normal animals into new ones.", "A big meteor killed all normal animals in the whole area."], answer: "Deep ocean water stopped animals from crossing long ago." }
+            ],
+            // TEAM 4
+            [
+                { text: "Indonesia is between the Indian Ocean and which other big ocean?", type: "Regular", options: ["The Pacific Ocean in the northern and eastern parts.", "The Atlantic Ocean on the far western side.", "The Arctic Ocean near the cold northern pole.", "The Mediterranean Sea right in the middle."], answer: "The Pacific Ocean in the northern and eastern parts." },
+                { text: "Jakarta, the capital city, is located on which island?", type: "Regular", options: ["The island of Java, which has a very large population.", "The island of Sumatra, known for its big forests.", "The island of Kalimantan, sharing land with Malaysia.", "The island of Papua, located far in the east."], answer: "The island of Java, which has a very large population." },
+                { text: "What imaginary line cuts Indonesia into northern and southern halves?", type: "Regular", options: ["The Equator line (Garis Khatulistiwa).", "The Prime Meridian line.", "The Tropic of Cancer line.", "The International Date Line."], answer: "The Equator line (Garis Khatulistiwa)." },
+                { text: "[HOTS] A tourist asks why trees in Indonesia do not drop all their leaves in Autumn. Why is this?", type: "HOTS", options: ["The tropical location keeps the weather warm and sunny all year.", "The thick jungle catches the leaves before they hit the ground.", "The heavy rain washes the yellow leaves away very quickly.", "The hot volcano burns the leaves while they are on the tree."], answer: "The tropical location keeps the weather warm and sunny all year." },
+                { text: "[HOTS] Why is it very hard for the sea police to guard all of Indonesia's water?", type: "HOTS", options: ["The area is huge with thousands of islands spread far apart.", "The ocean is too shallow for police boats to move around.", "Volcano smoke hides the bad fishing boats completely.", "The equator magic breaks all the radars on police boats."], answer: "The area is huge with thousands of islands spread far apart." },
+                { text: "[HOTS] Two big oceans mix water in Indonesia. How does this help local fishermen?", type: "HOTS", options: ["It mixes food and temperatures, bringing many different fish.", "It makes giant whirlpools that trap fish in one small place.", "It turns the water very salty, keeping the fish alive longer.", "It washes all the fish onto the beach so they are easy to catch."], answer: "It mixes food and temperatures, bringing many different fish." },
+                { text: "[HOTS] A company wants to use the sun to make electricity. Why is Indonesia a great place for this?", type: "HOTS", options: ["The tropical area gets strong sunlight almost every single day.", "The wind blows very hard to keep the sun panels very cool.", "There are no mountains to block the view of the bright sun.", "The volcanic ground naturally makes electricity on its own."], answer: "The tropical area gets strong sunlight almost every single day." },
+                { text: "[HOTS] After a big earthquake on a small island, why is it hard to send medicine?", type: "HOTS", options: ["Medicine must go by boats or planes, which can be slowed by storms.", "People always run away to different islands before help arrives.", "The people there speak a language the doctors do not know.", "There are no hospitals anywhere outside of the big capital city."], answer: "Medicine must go by boats or planes, which can be slowed by storms." }
+            ],
+            // TEAM 5
+            [
+                { text: "Why does Indonesia need three different time zones?", type: "Regular", options: ["Because the country stretches very far from west to east.", "Because the mountains are much higher than the beaches.", "Because the government wanted to divide the big tribes.", "Because the wind changes direction in the middle of the year."], answer: "Because the country stretches very far from west to east." },
+                { text: "Because there is ocean everywhere, what job is very common in Indonesia?", type: "Regular", options: ["Catching fish and traveling on the water.", "Digging deep holes to find ancient ice.", "Riding horses across flat, open grass fields.", "Building giant castles made out of sand."], answer: "Catching fish and traveling on the water." },
+                { text: "Indonesia shares a direct land border with which country?", type: "Regular", options: ["Malaysia, located on the island of Kalimantan.", "Australia, located just below the southern ocean.", "Singapore, located at the very top of Sumatra.", "Philippines, located above the northern sea."], answer: "Malaysia, located on the island of Kalimantan." },
+                { text: "[HOTS] The big forests in Kalimantan help the whole Earth. What do they do?", type: "HOTS", options: ["They clean the air by absorbing dangerous carbon dioxide.", "They make a special oxygen only needed by people in Europe.", "They keep the island heavy so it does not float away.", "They block the strong sun from melting the dirt on the ground."], answer: "They clean the air by absorbing dangerous carbon dioxide." },
+                { text: "[HOTS] How do the tall mountains in Java help the farmers who live there?", type: "HOTS", options: ["The cool air and volcano dirt are perfect for growing vegetables.", "The steep hills make it easy to slide heavy rocks down to the sea.", "The mountains protect the farms from getting hit by the sunshine.", "The height allows farmers to pick clouds to use for drinking water."], answer: "The cool air and volcano dirt are perfect for growing vegetables." },
+                { text: "[HOTS] Why might moving the capital city to Kalimantan be a smart idea?", type: "HOTS", options: ["It is centrally located and is much safer from big earthquakes.", "It is outside the tropics, so the weather is much cooler there.", "It is a man-made island, so they can build it exactly how they want.", "It is completely empty and nobody has ever lived there before."], answer: "It is centrally located and is much safer from big earthquakes." },
+                { text: "[HOTS] Why do many traditional Indonesian houses stand on tall wooden legs (stilts)?", type: "HOTS", options: ["It protects the house from heavy floods during the rainy season.", "It brings the house closer to the sun for religious ceremonies.", "It lets snow slide under the house during the cold winter time.", "It makes it easy for people to jump directly onto their boats."], answer: "It protects the house from heavy floods during the rainy season." },
+                { text: "[HOTS] How can Indonesia use its active volcanoes to create clean energy?", type: "HOTS", options: ["By using the deep underground heat to make geothermal electricity.", "By catching the bright lava and selling it as glowing street lights.", "By letting the ash clean the ocean water for expensive drinking water.", "By using earthquake shaking to dig holes for electrical wires."], answer: "By using the deep underground heat to make geothermal electricity." }
+            ],
+            // TEAM 6
+            [
+                { text: "What do we call the middle line of the Earth that passes through Indonesia?", type: "Regular", options: ["The Equator.", "The Prime Meridian.", "The North Tropic.", "The Date Line."], answer: "The Equator." },
+                { text: "Which area gets the driest wind during the East Monsoon season?", type: "Regular", options: ["The eastern islands, because they are close to dry Australia.", "The western islands, because they are far from the oceans.", "The high mountains, because the air freezes immediately.", "The big cities, because the concrete buildings drink the water."], answer: "The eastern islands, because they are close to dry Australia." },
+                { text: "Why are there so many different types of plants and animals in Indonesia?", type: "Regular", options: ["Because it sits on the equator and has different ecological zones.", "Because early visitors brought every animal from their home countries.", "Because scientists built big animal laboratories on empty islands.", "Because the islands used to be completely covered in thick ice."], answer: "Because it sits on the equator and has different ecological zones." },
+                { text: "[HOTS] The ocean separates Indonesia's islands. How does this affect the people?", type: "HOTS", options: ["It preserves unique local cultures, but makes building national roads hard.", "It keeps the country totally safe, but no one can ever leave for work.", "It provides great beaches, but makes it impossible to grow any food.", "It stops people from fighting, but makes it hard to use mobile phones."], answer: "It preserves unique local cultures, but makes building national roads hard." },
+                { text: "[HOTS] Why are the coral reefs in eastern Indonesia so beautiful and healthy?", type: "HOTS", options: ["Warm, rich ocean water constantly flows through those deep channels.", "The water is very shallow, giving corals 24 hours of sunlight every day.", "No humans live in the east, so there is absolutely zero pollution there.", "The equator line acts as a wall, keeping the ocean water perfectly still."], answer: "Warm, rich ocean water constantly flows through those deep channels." },
+                { text: "[HOTS] If a volcano explodes and fills the sky with ash, what happens to airplanes?", type: "HOTS", options: ["The ash damages plane engines, forcing airports to cancel flights.", "The ash makes the air thick, helping planes fly much faster.", "The ash hides the sun, making planes use old maps to steer.", "The ash breaks compasses, making planes fly the wrong way."], answer: "The ash damages plane engines, forcing airports to cancel flights." },
+                { text: "[HOTS] Why is the changing time between dry and wet seasons dangerous for small boats?", type: "HOTS", options: ["It causes sudden strong storms, big waves, and tricky winds.", "The ocean water drains away, leaving the boats stuck in mud.", "All the fish swim deep away, making fishing completely useless.", "The water becomes so cold that it quickly freezes the boats."], answer: "It causes sudden strong storms, big waves, and tricky winds." },
+                { text: "[HOTS] Why do leaders say Indonesia holds the 'keys to Asian sea trade'?", type: "HOTS", options: ["Narrow straits like Malacca are mandatory paths for cargo ships.", "Indonesia owns the biggest cargo ships and controls the prices.", "Indonesia makes all the raw materials needed by Asian factories.", "Volcanoes will erupt on purpose if passing ships do not pay."], answer: "Narrow straits like Malacca are mandatory paths for cargo ships." }
+            ]
+        ];
+
+        let teams = [
+            { id: 1, name: "Team Alpha", icon: "🦅", theme: "red", questions: [], score: 0 },
+            { id: 2, name: "Team Bravo", icon: "🐅", theme: "orange", questions: [], score: 0 },
+            { id: 3, name: "Team Charlie", icon: "🦈", theme: "blue", questions: [], score: 0 },
+            { id: 4, name: "Team Delta", icon: "🐍", theme: "green", questions: [], score: 0 },
+            { id: 5, name: "Team Echo", icon: "🦇", theme: "purple", questions: [], score: 0 },
+            { id: 6, name: "Team Foxtrot", icon: "🦍", theme: "yellow", questions: [], score: 0 }
+        ];
+
+        const themeColors = {
+            red: { border: 'border-red-500', text: 'text-red-400', bg: 'bg-red-600', dot: 'bg-red-500', shadow: 'shadow-[0_0_15px_#ef4444]' },
+            orange: { border: 'border-orange-500', text: 'text-orange-400', bg: 'bg-orange-600', dot: 'bg-orange-500', shadow: 'shadow-[0_0_15px_#f97316]' },
+            blue: { border: 'border-blue-400', text: 'text-blue-300', bg: 'bg-blue-500', dot: 'bg-blue-400', shadow: 'shadow-[0_0_15px_#60a5fa]' },
+            green: { border: 'border-green-400', text: 'text-green-300', bg: 'bg-green-500', dot: 'bg-green-400', shadow: 'shadow-[0_0_15px_#4ade80]' },
+            purple: { border: 'border-purple-400', text: 'text-purple-300', bg: 'bg-purple-500', dot: 'bg-purple-400', shadow: 'shadow-[0_0_15px_#c084fc]' },
+            yellow: { border: 'border-yellow-400', text: 'text-yellow-300', bg: 'bg-yellow-500', dot: 'bg-yellow-400', shadow: 'shadow-[0_0_15px_#facc15]' }
+        };
+
+        // Map Node Coordinates (Percentages X, Y)
+        const mapNodes = [
+            { x: 15, y: 20 }, // 0: Crash Site (Start)
+            { x: 45, y: 15 }, // 1
+            { x: 75, y: 25 }, // 2
+            { x: 80, y: 50 }, // 3
+            { x: 50, y: 45 }, // 4 (Center)
+            { x: 25, y: 55 }, // 5
+            { x: 20, y: 80 }, // 6
+            { x: 50, y: 85 }, // 7
+            { x: 85, y: 85 }  // 8: Escape Boat
+        ];
+
+        let currentTeamTurn = 0; 
+        let currentRound = 0; 
+        let isAnswering = false;
+
+        function initGame() {
+            teams.forEach((team, index) => {
+                let teamQs = JSON.parse(JSON.stringify(allQuestions[index])); 
+                
+                // Shuffle only the OPTIONS, keep question order strictly 1-8 so HOTS stay at the end
+                teamQs.forEach(q => {
+                    q.options = shuffleArray(q.options);
+                });
+                
+                team.questions = teamQs;
+            });
+            initBoard();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function showScreen(screenId) {
+            ['screen-menu', 'screen-main-board', 'screen-game', 'screen-leaderboard'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function startGame() {
+            showScreen('screen-main-board');
+            updateBoard();
+        }
+
+        function initBoard() {
+            const mapContainer = document.getElementById('island-map');
+            const svgOverlay = document.getElementById('map-paths');
+            const quickScores = document.getElementById('quick-scores');
+            
+            // Clean up dynamically added nodes/avatars
+            document.querySelectorAll('.map-node, .team-avatar').forEach(e => e.remove());
+            quickScores.innerHTML = '';
+            
+            // 1. Draw SVG Path connecting the nodes
+            const pointsStr = mapNodes.map(n => `${n.x},${n.y}`).join(' ');
+            svgOverlay.innerHTML = `<polyline points="${pointsStr}" fill="none" stroke="#fcd34d" stroke-width="1.5" stroke-dasharray="3,3" />`;
+            
+            // 2. Place Map Nodes (Checkpoints)
+            mapNodes.forEach((node, index) => {
+                const nodeDiv = document.createElement('div');
+                nodeDiv.className = `map-node ${index === 8 ? 'finish-line' : ''}`;
+                nodeDiv.style.left = `${node.x}%`;
+                nodeDiv.style.top = `${node.y}%`;
+                nodeDiv.innerText = index === 0 ? "S" : (index === 8 ? "🛥️" : index);
+                mapContainer.appendChild(nodeDiv);
+            });
+            
+            // 3. Place Avatars & Quick Scores
+            teams.forEach((team, index) => {
+                const colors = themeColors[team.theme];
+                
+                // Avatar
+                const avatarDiv = document.createElement('div');
+                avatarDiv.id = `avatar-${index}`;
+                avatarDiv.className = `team-avatar`;
+                avatarDiv.innerHTML = team.icon;
+                mapContainer.appendChild(avatarDiv);
+                
+                // Quick Score Badge
+                quickScores.innerHTML += `
+                    <div id="score-badge-${index}" class="bg-black/70 border-2 ${colors.border} rounded px-3 py-1 text-xs md:text-sm text-white flex items-center shadow-lg transition-all">
+                        <span class="mr-2 text-lg">${team.icon}</span> 
+                        <span class="font-bold mr-2">${team.name}:</span>
+                        <span id="score-num-${index}" class="${colors.text} font-bold text-lg pixel-font">0</span>
+                    </div>
+                `;
+            });
+        }
+
+        function updateBoard() {
+            document.getElementById('board-round-display').innerText = `${currentRound + 1}/8`;
+            const nextTeam = teams[currentTeamTurn];
+            const activeColors = themeColors[nextTeam.theme];
+            
+            document.getElementById('board-turn-display').innerHTML = `<span class="${activeColors.text}">${nextTeam.icon} ${nextTeam.name}</span>`;
+            
+            const startBtn = document.getElementById('btn-start-turn');
+            startBtn.innerText = `Face Next Challenge (${nextTeam.name})`;
+            
+            teams.forEach((team, index) => {
+                const avatarEl = document.getElementById(`avatar-${index}`);
+                const badgeEl = document.getElementById(`score-badge-${index}`);
+                const scoreNumEl = document.getElementById(`score-num-${index}`);
+                
+                const isCurrentTurn = index === currentTeamTurn;
+                
+                // Active State Styling for Badges
+                if (isCurrentTurn) {
+                    badgeEl.classList.add('scale-110');
+                    badgeEl.style.boxShadow = `0 0 15px ${themeColors[team.theme].text}`;
+                    avatarEl.classList.add('active-turn');
+                } else {
+                    badgeEl.classList.remove('scale-110');
+                    badgeEl.style.boxShadow = 'none';
+                    avatarEl.classList.remove('active-turn');
+                }
+                
+                // Position Calculation based on Score
+                const currentNode = mapNodes[team.score];
+                
+                // Calculate circular offset so avatars don't overlap completely on the same node
+                const angle = (index * 60) * (Math.PI / 180);
+                const offsetX = Math.cos(angle) * 15; // pixels
+                const offsetY = Math.sin(angle) * 15; // pixels
+                
+                const targetLeft = `calc(${currentNode.x}% + ${offsetX}px)`;
+                const targetTop = `calc(${currentNode.y}% + ${offsetY}px)`;
+                
+                // Check if moving to apply animation
+                if (avatarEl.style.left && avatarEl.style.left !== targetLeft) {
+                    avatarEl.classList.add('walking-anim');
+                    setTimeout(() => {
+                        avatarEl.classList.remove('walking-anim');
+                    }, 1000); // Remove hop after transition
+                }
+                
+                avatarEl.style.left = targetLeft;
+                avatarEl.style.top = targetTop;
+                
+                scoreNumEl.innerText = team.score;
+            });
+        }
+
+        function startTurn() {
+            showScreen('screen-game');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const team = teams[currentTeamTurn];
+            const qIndex = currentRound;
+            const question = team.questions[qIndex];
+            const env = environments[qIndex]; 
+            
+            isAnswering = true;
+            document.getElementById('btn-finish-turn').classList.add('hidden');
+            
+            document.getElementById('current-team-display').innerHTML = `<span class="${themeColors[team.theme].text}">${team.icon} ${team.name}</span>`;
+            
+            // Clearly label if it's a HOTS level
+            let levelText = qIndex + 1;
+            if (qIndex >= 3) {
+                levelText += ` <span class="text-red-400 font-bold animate-pulse">(HOTS LEVEL)</span>`;
+            }
+            document.getElementById('question-number').innerHTML = levelText;
+            
+            document.getElementById('progress-bar').style.width = `${((qIndex) / 8) * 100}%`;
+            
+            document.getElementById('obstacle-environment').innerText = env.emoji;
+            document.getElementById('obstacle-context').innerText = env.context;
+            
+            let qText = question.text;
+            if (qText.startsWith("[HOTS]")) {
+                qText = `<span class="bg-red-600 text-white px-2 py-1 text-xs rounded mr-2 uppercase shadow-md">HOTS</span>` + qText.replace("[HOTS]", "");
+            }
+            document.getElementById('question-text').innerHTML = qText;
+            
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = '';
+            
+            question.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option hover:shadow-[0_0_15px_rgba(255,255,255,0.2)]';
+                
+                const labels = ['A', 'B', 'C', 'D'];
+                btn.innerHTML = `<div class="flex"><span class="font-bold mr-3 text-yellow-400 text-lg">${labels[index]}.</span> <span class="flex-1">${opt}</span></div>`;
+                
+                btn.onclick = () => selectAnswer(opt, btn);
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedOpt, btnElement) {
+            if (!isAnswering) return;
+            isAnswering = false; 
+            
+            const team = teams[currentTeamTurn];
+            const question = team.questions[currentRound];
+            const isCorrect = selectedOpt === question.answer;
+            
+            btnElement.classList.add('selected');
+            const allBtns = document.querySelectorAll('.btn-option');
+            
+            setTimeout(() => {
+                allBtns.forEach(btn => {
+                    btn.style.cursor = 'default';
+                    btn.onclick = null;
+                    btn.classList.remove('selected');
+                    
+                    // Extract text by getting the second span inside the flex div
+                    const optSpans = btn.querySelectorAll('span');
+                    const optText = optSpans[1].innerText;
+                    
+                    if (optText === question.answer) {
+                        btn.classList.add('correct');
+                    } else if (btn === btnElement && !isCorrect) {
+                        btn.classList.add('incorrect');
+                    }
+                });
+                
+                if (isCorrect) {
+                    team.score++;
+                    showMessage("Obstacle Overcome! Forward March!", "success");
+                } else {
+                    showMessage("Stuck! You must wait here.", "error");
+                }
+                
+                document.getElementById('progress-bar').style.width = `${((currentRound + 1) / 8) * 100}%`;
+                document.getElementById('btn-finish-turn').classList.remove('hidden');
+                
+            }, 800); 
+        }
+
+        function finishTurn() {
+            currentTeamTurn++;
+            
+            if (currentTeamTurn >= teams.length) {
+                currentTeamTurn = 0;
+                currentRound++;
+            }
+            
+            if (currentRound >= 8) {
+                showLeaderboard();
+            } else {
+                showScreen('screen-main-board');
+                updateBoard(); // The walking animation will trigger here if score increased
+            }
+        }
+
+        function showLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+            
+            // Sort teams by score descending
+            const sortedTeams = [...teams].sort((a, b) => b.score - a.score);
+            
+            sortedTeams.forEach((team, index) => {
+                let rankClass = '';
+                let rankText = `#${index + 1}`;
+                
+                if (index === 0 && team.score > 0) { rankClass = 'gold'; rankText = '🏆 1st'; }
+                else if (index === 1 && team.score > 0) { rankClass = 'silver'; rankText = '🥈 2nd'; }
+                else if (index === 2 && team.score > 0) { rankClass = 'bronze'; rankText = '🥉 3rd'; }
+                
+                const status = team.score === 8 ? `<span class="text-green-400">Escaped!</span>` : `${team.score} / 8`;
+                
+                const row = document.createElement('div');
+                row.className = `leaderboard-row text-white ${rankClass}`;
+                row.innerHTML = `
+                    <div class="flex items-center">
+                        <span class="w-12 md:w-16 font-bold pixel-font text-[10px] md:text-sm">${rankText}</span>
+                        <span class="text-xl md:text-2xl mr-3">${team.icon}</span>
+                        <span class="font-bold text-sm md:text-base">${team.name}</span>
+                    </div>
+                    <div class="font-bold text-lg md:text-xl pixel-font">${status}</div>
+                `;
+                list.appendChild(row);
+            });
+            
+            document.getElementById('btn-restart').classList.remove('hidden');
+            showScreen('screen-leaderboard');
+        }
+
+        function resetGame() {
+            teams.forEach(team => {
+                team.score = 0;
+                team.questions = [];
+            });
+            currentTeamTurn = 0;
+            currentRound = 0;
+            initGame();
+            document.getElementById('btn-restart').classList.add('hidden');
+            showScreen('screen-menu');
+        }
+
+        function showMessage(msg, type) {
+            const msgEl = document.getElementById('statusMessage');
+            msgEl.innerText = msg;
+            msgEl.className = `status-message status-${type} fade-in`;
+            msgEl.style.display = 'block';
+            
+            setTimeout(() => {
+                msgEl.style.display = 'none';
+            }, 2000);
+        }
+
+        // Initialize on load
+        window.onload = initGame;
+
+    </script>
+</body>
+</html>
